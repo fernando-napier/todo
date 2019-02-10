@@ -12,6 +12,7 @@ public class Subtask {
     private String description;
     private boolean finished;
     private String todoItemID;
+    private ProgressType progressType;
 
     public String getTodoItemID() {
         return todoItemID;
@@ -24,15 +25,24 @@ public class Subtask {
     public Subtask() {
     }
 
-    public Subtask(String id, String description, String owner, String todoItemID, boolean isFinished) {
+    public Subtask(String id, String description, String owner, String todoItemID, ProgressType progressType, boolean isFinished) {
         this.description = description;
         this.id = id;
         this.todoItemID = todoItemID;
+        this.progressType = progressType;
         this.finished = isFinished;
     }
 
     public Subtask(String id, String description, String owner, String todoItemID) {
-        new Subtask(id, description, owner, todoItemID,false);
+        new Subtask(id, description, owner, todoItemID, progressType, false);
+    }
+
+    public ProgressType getProgressType() {
+        return progressType;
+    }
+
+    public void setProgressType(ProgressType progressType) {
+        this.progressType = progressType;
     }
 
     public boolean isFinished() {

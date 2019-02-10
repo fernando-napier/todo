@@ -8,8 +8,9 @@
 angular.module('todoApp')
     .factory('todoListSvc', ['$http', function ($http) {
         return {
-            getItems: function () {
-                return $http.get('api/todolist');
+
+            getItems: function (activeFlag) {
+                return $http.get('api/todolist?activeFlag=' + activeFlag);
             },
             getItem: function (id) {
                 return $http.get('api/todolist/' + id);
@@ -38,10 +39,10 @@ angular.module('todoApp')
              putSubtask: function (todoID, subtask) {
                  return $http.put('api/todolist/' + todoID + '/subtask/', subtask);
              },
-             deleteItem: function (todoID, subtaskID) {
+             deleteSubtask: function (todoID, subtaskID) {
                  return $http({
                      method: 'DELETE',
-                     url: 'api/todolist/' + todoID + '/subtask' + id
+                     url: 'api/todolist/' + todoID + '/subtask' + subtaskID
                  });
              }
         };

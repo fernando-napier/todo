@@ -12,6 +12,12 @@ angular.module('todoApp')
         $scope.todoList = null;
         $scope.editingInProgress = false;
         $scope.newTodoCaption = '';
+        $scope.newTodoTitle = '';
+        $scope.newTodoDescription = '';
+        $scope.newTodoProgress = '';
+        $scope.newTodoPriority = '';
+        $scope.newTodoDueDate = '';
+
 
         $scope.editInProgressTodo = {
             description: '',
@@ -27,9 +33,20 @@ angular.module('todoApp')
             })
         };
 
+        $scope.taskCompleted = function (todo) {
+            todo.progressType = "COMPLETED";
+
+            todoListSvc.putItem(todo).error(function (err) {
+                todo.finished = !todo.finished;
+                $scope.error = err;
+                $scope.loadingMessage = '';
+            })
+        };
+
         $scope.editSwitch = function (todo) {
             todo.edit = !todo.edit;
             if (todo.edit) {
+                $scope.editInProgressTodo.title = todo.title;
                 $scope.editInProgressTodo.description = todo.description;
                 $scope.editInProgressTodo.id = todo.id;
                 $scope.editInProgressTodo.finished = todo.finished;
@@ -39,8 +56,8 @@ angular.module('todoApp')
             }
         };
 
-        $scope.populate = function () {
-            todoListSvc.getItems().success(function (results) {
+        $scope.populate = function (activeFlag) {
+            todoListSvc.getItems(activeFlag).success(function (results) {
                 $scope.todoList = results;
             }).error(function (err) {
                 $scope.error = err;
@@ -79,12 +96,17 @@ angular.module('todoApp')
             }
 
             todoListSvc.postItem({
-                'description': $scope.newTodoCaption,
+                'title': $scope.newTodoTitle,
+                'description': $scope.newTodoDescription,
+                'progressType': $scope.newTodoProgress,
+                'priorityType': $scope.newTodoPriority,
+                'dueDate': $scope.newTodoDueDate,
                 'owner': getUser(),
                 'finish': 'false'
             }).success(function (results) {
-                $scope.newTodoCaption = '';
-                $scope.populate();
+                $scope.newTodoTitle  = '';
+                $scope.newTodoDescription  = '';
+                $scope.populate("true");
                 $scope.loadingMessage = results;
                 $scope.error = '';
             }).error(function (err) {

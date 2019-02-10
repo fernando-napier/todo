@@ -12,5 +12,6 @@ public interface SubtaskRepository extends DocumentDbRepository<Subtask, String>
 
     List<Subtask> findByTodoItemID(String todoItemID);
     List<Subtask> findByIdAndTodoItemID(String id, String todoItemID);
+    void deleteByTodoItemID(String todoItemID);
 }
 

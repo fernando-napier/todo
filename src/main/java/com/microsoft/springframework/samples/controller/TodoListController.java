@@ -7,8 +7,11 @@ package com.microsoft.springframework.samples.controller;
 
 import com.microsoft.springframework.samples.dao.SubtaskRepository;
 import com.microsoft.springframework.samples.dao.TodoItemRepository;
+import com.microsoft.springframework.samples.model.ProgressType;
 import com.microsoft.springframework.samples.model.Subtask;
 import com.microsoft.springframework.samples.model.TodoItem;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -63,6 +66,8 @@ public class TodoListController {
     public ResponseEntity<?> getTodoItem(@PathVariable("index") String todolistID) {
         System.out.println(new Date() + " GET ======= /api/todolist/{" + todolistID
                 + "} =======");
+
+
         try {
             return new ResponseEntity<>(todoItemRepository.findById(todolistID), HttpStatus.OK);
         } catch (Exception e) {
@@ -91,10 +96,33 @@ public class TodoListController {
     //
     @RequestMapping(value = "/api/todolist",
             method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> getAllTodoItems() {
+    public ResponseEntity<?> getAllTodoItems(@RequestParam("activeFlag") String activeString) {
         System.out.println(new Date() + " GET ======= /api/todolist =======");
+
+        Boolean activeFlag = null;
+
+        if (StringUtils.isNotBlank(activeString)) {
+            activeFlag = Boolean.valueOf(activeString);
+        }
+
         try {
-            return new ResponseEntity<>(todoItemRepository.findAll(new Sort(Sort.Direction.DESC, "title")), HttpStatus.OK);
+            if (activeFlag == null) {
+                return new ResponseEntity<>(todoItemRepository.findAll(new Sort(Sort.Direction.DESC, "priorityType")), HttpStatus.OK);
+            } else if (activeFlag == true) {
+                List<String> list = new ArrayList<String>() {{
+                    add(ProgressType.NOT_STARTED.toString());
+                    add(ProgressType.IN_PROGRESS.toString());
+                    add(ProgressType.ALMOST_DONE.toString());
+                }};
+
+                return new ResponseEntity<>(todoItemRepository.findByProgressTypeIn(list, new Sort(Sort.Direction.DESC, "priorityType")), HttpStatus.OK);
+            } else if (activeFlag == false) {
+                return new ResponseEntity<>(todoItemRepository.findByProgressType(ProgressType.COMPLETED, new Sort(Sort.Direction.ASC, "dueDate")), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(todoItemRepository.findAll(new Sort(Sort.Direction.DESC, "priorityType")), HttpStatus.OK);
+            }
+
+
         } catch (Exception e) {
             return new ResponseEntity<>("Nothing found", HttpStatus.NOT_FOUND);
         }
@@ -139,15 +167,13 @@ public class TodoListController {
                 + "} ======= ");
         try {
             todoItemRepository.deleteById(id);
+            subtaskRepository.deleteByTodoItemID(id);
             return new ResponseEntity<String>("Entity deleted", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<String>("Entity deletion failed", HttpStatus.NOT_FOUND);
         }
 
     }
-
-
-
 
 
     /**
@@ -170,7 +196,7 @@ public class TodoListController {
      * HTTP PUT UPDATE
      */
     @RequestMapping(value = "/api/todolist/{todoID}/subtask/", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> updateSubtask(String todoID,@RequestBody Subtask subtask) {
+    public ResponseEntity<String> updateSubtask(String todoID, @RequestBody Subtask subtask) {
         System.out.println(new Date() + " PUT ======= /api/todolist ======= " + subtask);
         try {
             TodoItem todoItem = todoItemRepository.findById(todoID).get();
@@ -193,11 +219,11 @@ public class TodoListController {
      */
     @RequestMapping(value = "/api/todolist/{todolistID}/subtask/{subtaskID}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteSubtask(@PathVariable("todolistID") String todolistID,
-                                                @PathVariable("subtaskID") String subtaskID ) {
+                                                @PathVariable("subtaskID") String subtaskID) {
         System.out.println(new Date() + " DELETE ======= /api/todolist/{" + todolistID + "}/subtask/{" + subtaskID
                 + "} ======= ");
         try {
-            List<Subtask> subtasks = subtaskRepository.findByIdAndTodoItemID(subtaskID, todolistID );
+            List<Subtask> subtasks = subtaskRepository.findByIdAndTodoItemID(subtaskID, todolistID);
 
             if (CollectionUtils.isEmpty(subtasks)) {
                 return new ResponseEntity<String>("Entity deletion failed", HttpStatus.NOT_FOUND);

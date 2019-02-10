@@ -1,28 +1,73 @@
-<div ng-init="populate()" style="margin-bottom: 40px !important;">
+<div ng-init="populate(true)" style="margin-bottom: 40px !important;">
     <div style="height: 70px !important;">
         <div class="alert alert-danger" data-ng-show="error && error !== ''"><strong>Failure!</strong>&nbsp;{{error}}</div>
         <div class="alert alert-success" data-ng-show="loadingMessage && loadingMessage !== ''"><strong>Success!</strong>&nbsp;{{loadingMessage}}</div>
     </div>
     <div class="panel">
-        <div class="input-group" style="margin-bottom: 20px !important;">
-            <input ng-model="newTodoCaption" class="form-control"/>
+        <div class="input-group" >
+            <input ng-model="newTodoTitle" placeholder="Title" class="form-control"/>
+            <br>
+            <input ng-model="newTodoDescription" placeholder="Description (Optional)" class="form-control"/>
+            <select  data-ng-model="newTodoProgress">
+                <option ng-selected="newProgress" value="NOT_STARTED">Not Started...</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="ALMOST_DONE">Almost Done</option>
+                <option value="COMPLETE">Complete!</option>
+            </select>
+            <select  data-ng-model="newTodoPriority">
+                <option value="LOW_IMPORTANCE">Low</option>
+                <option ng-selected="newPriority" value="MEDIUM_IMPORTANCE">Medium</option>
+                <option value="VERY_IMPORTANT">High</option>
+            </select>
+            <br>
+            <form>
+                Due Date:
+                <input type="date" name="dueDate" data-ng-model="newTodoDueDate">
+            </form>
             <span class="input-group-btn">
                 <button ng-click="add()" class="btn btn-primary">Add</button>
             </span>
         </div>
         <ul class="list-group" id="todolist">
             <div class="list-group-item list-group-item-action flex-column align-items-start" data-ng-repeat="item in todoList">
-                <div data-ng-hide="item.edit">
+                <div>
                     <button type="button" class="btn btn-info float-right btn-sm" data-ng-model="item.finished"  data-ng-click="finishSwitch(item)">Complete</button>
                     <button type="button" class="btn btn-success float-right btn-sm" ng-disabled="item.finished" data-ng-click="editSwitch(item)">Edit</button>
                     <button type="button" class="btn btn-info float-right btn-sm" ng-disabled="item.finished" data-ng-click="">Create SubTask</button>
                     <button type="button" class="btn btn-danger float-right btn-sm" data-ng-click="delete(item.id)">Delete</button>
-                    <input type="checkbox" data-ng-model="item.finished" data-ng-change="finishSwitch(item)"/>
-                    <span data-ng-hide="item.finished">{{item.description}}</span>
-                    <span data-ng-show="item.finished"><del>{{item.description}}</del></span>
+
+                    <span data-ng-hide="item.finished"> ID: {{item.id}}</span>
+                    <br>
+                    <span data-ng-hide="item.finished"> TODO: {{item.title}}</span>
+                    <span data-ng-show="item.finished"><del> DONE: {{item.title}}</del></span>
+                    <br>
+                    <span data-ng-hide="item.finished"> DESCRIPTION: {{item.description}}</span>
+                    <br>
+                    <span data-ng-hide="item.finished"> PRIORITY: {{item.priorityType}}</span>
+                    <br>
+                    <span data-ng-hide="item.finished"> PROGRESS: {{item.progressType}}</span>
+                    <br>
+                    <span data-ng-hide="item.finished"> DUE: {{ item.dueDate | date  : "MM/d/y"}} </span>
+                    <br>
                 </div>
                 <div data-ng-show="item.edit" class="input-group">
-                    <input class="form-control" data-ng-model="editInProgressTodo.description" />
+                    <input class="form-control" data-ng-model="editInProgressTodo.title"/>
+                    <input class="form-control" data-ng-model="editInProgressTodo.description"/>
+                    <select  data-ng-model="editInProgressTodo.progressType">
+                        <option value="NOT_STARTED">Not Started...</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="ALMOST_DONE">Almost Done</option>
+                        <option value="COMPLETE">Complete!</option>
+                    </select>
+                    <select  data-ng-model="editInProgressTodo.priorityType">
+                        <option value="LOW_IMPORTANCE">Low</option>
+                        <option value="MEDIUM_IMPORTANCE">Medium</option>
+                        <option value="VERY_IMPORTANT">High</option>
+                    </select>
+                    <form>
+                        Due Date:
+                        <input type="date" name="dueDate" data-ng-model="newTodoDueDate">
+                    </form>
                     <span class="input-group-btn">
                         <button type="button" data-ng-click="update(item)" class="btn btn-primary float-right btn-sm">Save</button>
                         <button type="button" data-ng-click="editSwitch(item)"  class="btn btn-secondary float-right btn-sm">Cancel</button>
