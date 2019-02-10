@@ -25,6 +25,24 @@ angular.module('todoApp')
                     method: 'DELETE',
                     url: 'api/todolist/' + id
                 });
-            }
+            },
+            getSubtasks: function (todoID) {
+                 return $http.get('api/todolist/' + todoID + '/subtask');
+             },
+            getSubtask: function (todoID, id) {
+                 return $http.get('api/todolist/' + todoID + '/subtask/' + id);
+             },
+             postSubtask: function (todoID, subtask) {
+                 return $http.post('api/todolist/' + todoID + '/subtask/', subtask);
+             },
+             putSubtask: function (todoID, subtask) {
+                 return $http.put('api/todolist/' + todoID + '/subtask/', subtask);
+             },
+             deleteItem: function (todoID, subtaskID) {
+                 return $http({
+                     method: 'DELETE',
+                     url: 'api/todolist/' + todoID + '/subtask' + id
+                 });
+             }
         };
     }]);

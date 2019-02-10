@@ -13,7 +13,9 @@
         <ul class="list-group" id="todolist">
             <div class="list-group-item list-group-item-action flex-column align-items-start" data-ng-repeat="item in todoList">
                 <div data-ng-hide="item.edit">
+                    <button type="button" class="btn btn-info float-right btn-sm" data-ng-model="item.finished"  data-ng-click="finishSwitch(item)">Complete</button>
                     <button type="button" class="btn btn-success float-right btn-sm" ng-disabled="item.finished" data-ng-click="editSwitch(item)">Edit</button>
+                    <button type="button" class="btn btn-info float-right btn-sm" ng-disabled="item.finished" data-ng-click="">Create SubTask</button>
                     <button type="button" class="btn btn-danger float-right btn-sm" data-ng-click="delete(item.id)">Delete</button>
                     <input type="checkbox" data-ng-model="item.finished" data-ng-change="finishSwitch(item)"/>
                     <span data-ng-hide="item.finished">{{item.description}}</span>

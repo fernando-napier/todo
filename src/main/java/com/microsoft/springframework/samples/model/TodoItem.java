@@ -6,25 +6,81 @@
 package com.microsoft.springframework.samples.model;
 
 import com.microsoft.azure.spring.data.cosmosdb.core.mapping.Document;
+import javafx.scene.layout.Priority;
 
+
+import java.util.Date;
 import java.util.Objects;
 
 @Document
 public class TodoItem {
     private String id;
+    private String title;
     private String description;
     private String owner;
     private boolean finished;
+    private Date dueDate;
+    private Date completedDate;
+    private ProgressType progressType;
+    private PriorityType priorityType;
 
-    public TodoItem() {
-    }
-
-    public TodoItem(String id, String description, String owner) {
+    public TodoItem(String id, String description, String owner, ProgressType type, PriorityType priorityType,
+                    Date dueDate, Date completedDate, String title) {
         this.description = description;
         this.id = id;
         this.owner = owner;
         this.finished = false;
+        this.progressType = type;
+        this.priorityType = priorityType;
+        this.dueDate = dueDate;
+        this.completedDate = completedDate;
+        this.title = title;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public Date getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(Date completedDate) {
+        this.completedDate = completedDate;
+    }
+
+    public PriorityType getPriorityType() {
+        return priorityType;
+    }
+
+    public void setPriorityType(PriorityType priorityType) {
+        this.priorityType = priorityType;
+    }
+
+    public ProgressType getProgressType() {
+        return progressType;
+    }
+
+    public void setProgressType(ProgressType progressType) {
+        this.progressType = progressType;
+    }
+
+    public TodoItem() {
+    }
+
+
 
     public boolean isFinished() {
         return finished;
@@ -67,9 +123,12 @@ public class TodoItem {
             return false;
         }
         final TodoItem group = (TodoItem) o;
-        return Objects.equals(this.getDescription(), group.getDescription())
+        return Objects.equals(this.getTitle(), group.getTitle())
+                && Objects.equals(this.getDescription(), group.getDescription())
                 && Objects.equals(this.getOwner(), group.getOwner())
-                && Objects.equals(this.getID(), group.getID());
+                && Objects.equals(this.getID(), group.getID())
+                && Objects.equals(this.getProgressType(), group.getProgressType())
+                && Objects.equals(this.getPriorityType(), group.getPriorityType());
     }
 
     @Override
