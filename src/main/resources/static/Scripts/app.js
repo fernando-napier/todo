@@ -13,5 +13,8 @@ angular.module('todoApp', ['ngRoute'])
         }).when('/TodoList', {
             controller: 'todoListCtrl',
             templateUrl: 'Views/TodoList.html',
-        }).otherwise({redirectTo: '/Home'});
+        }).when('/Archive', {
+              controller: 'todoListCtrl',
+              templateUrl: 'Views/Archive.html',
+          }).otherwise({redirectTo: '/Home'});
     }]);

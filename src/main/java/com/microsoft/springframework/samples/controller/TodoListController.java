@@ -179,11 +179,12 @@ public class TodoListController {
     /**
      * HTTP POST NEW ONE
      */
-    @RequestMapping(value = "/api/todolist/{todolistID}/subtask", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> addNewSubtask(@RequestBody Subtask subtask) {
+    @RequestMapping(value = "/api/todolist/{todoItemID}/subtask", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> addNewSubtask(@PathVariable("todoItemID") String todoItemID, @RequestBody Subtask subtask) {
         System.out.println(new Date() + " POST ======= /api/todolist ======= " + subtask);
         try {
             subtask.setID(UUID.randomUUID().toString());
+            subtask.setTodoItemID(todoItemID);
             subtaskRepository.save(subtask);
             return new ResponseEntity<String>("Entity created", HttpStatus.CREATED);
         } catch (Exception e) {

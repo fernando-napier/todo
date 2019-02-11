@@ -17,6 +17,7 @@ angular.module('todoApp')
         $scope.newTodoProgress = '';
         $scope.newTodoPriority = '';
         $scope.newTodoDueDate = '';
+        $scope.subtasks = null;
 
 
         $scope.editInProgressTodo = {
@@ -26,12 +27,26 @@ angular.module('todoApp')
         };
 
         $scope.finishSwitch = function (todo) {
+            todo.progressType = "COMPLETED";
+            todo.completedDate = Date.now();
+
             todoListSvc.putItem(todo).error(function (err) {
                 todo.finished = !todo.finished;
                 $scope.error = err;
                 $scope.loadingMessage = '';
             })
         };
+
+        $scope.reOpenSwitch = function (todo) {
+                    todo.progressType = "IN_PROGRESS";
+                    todo.completedDate = null;
+
+                    todoListSvc.putItem(todo).error(function (err) {
+                        todo.finished = !todo.finished;
+                        $scope.error = err;
+                        $scope.loadingMessage = '';
+                    })
+                };
 
         $scope.taskCompleted = function (todo) {
             todo.progressType = "COMPLETED";
@@ -56,9 +71,68 @@ angular.module('todoApp')
             }
         };
 
+        $scope.toggleViewCreateSubtask = function (todo) {
+                    todo.editTask = !todo.editTask;
+
+                if (todo.editTask) {
+                    $scope.editingInProgress = true;
+                } else {
+                    $scope.editingInProgress = false;
+                }
+         };
+
+         $scope.finishCreateSubtask = function (todoItemID) {
+                     function getUser() {
+                         var user = localStorage.getItem('user') || 'unknown';
+                         localStorage.setItem('user', user);
+                         return user;
+                     }
+
+                      todo.editTask = !todo.editTask;
+
+                     todoListSvc.postSubtask(todoItemID, {
+                         'description': $scope.newTaskDescription,
+                         'progressType': $scope.newTaskProgress,
+                         'todoItemID': todoItemID,
+                         'owner': getUser(),
+                         'finish': 'false'
+                     }).success(function (results) {
+                         $scope.newTodoTitle  = '';
+                         $scope.newTodoDescription  = '';
+                         $scope.populate("true");
+                         $scope.loadingMessage = results;
+                         $scope.error = '';
+                     }).error(function (err) {
+                         $scope.error = err;
+                         $scope.loadingMsg = '';
+                     })
+                 };
+
+        $scope.editTask = function (task) {
+            task.edit = !task.edit;
+            if (task.edit) {
+                $scope.editInProgressTodo.title = todo.title;
+                $scope.editInProgressTodo.description = todo.description;
+                $scope.editInProgressTodo.id = todo.id;
+                $scope.editInProgressTodo.finished = todo.finished;
+                $scope.editingInProgress = true;
+            } else {
+                $scope.editingInProgress = false;
+            }
+        };
+
         $scope.populate = function (activeFlag) {
             todoListSvc.getItems(activeFlag).success(function (results) {
                 $scope.todoList = results;
+            }).error(function (err) {
+                $scope.error = err;
+                $scope.loadingMessage = '';
+            })
+        };
+
+        $scope.populateSubtasks = function (id) {
+            todoListSvc.getSubtasks(id).success(function (results) {
+                $scope.subtasks = results;
             }).error(function (err) {
                 $scope.error = err;
                 $scope.loadingMessage = '';
@@ -114,4 +188,9 @@ angular.module('todoApp')
                 $scope.loadingMsg = '';
             })
         };
+
+
+
+
+
     }]);
