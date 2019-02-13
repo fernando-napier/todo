@@ -102,18 +102,7 @@
                   </span>
                     </div>
                 </div>
-                <div  ng-init="populateSubtasks(item.id)">
-                    <ul  class="list-group" id="subtasks">
-                        <div class="list-group-item list-group-item-action flex-column align-items-start" ng-repeat="task in subtasks">
-                            <button type="button" class="btn btn-danger float-right btn-sm" data-ng-click="delete(task.id)">Delete</button>
-                            <button type="button" class="btn btn-success float-right btn-sm" ng-disabled="item.finished" data-ng-click="editSubtask(task)">Edit</button>
-                            <br>
-                            <span data-ng-hide="item.finished"> DESCRIPTION: {{task.description}}</span>
-                            <br>
-                            <span data-ng-hide="item.finished"> PROGRESS: {{task.progressType}}</span>
-                        </div>
-                    </ul>
-                </div>
+
             </div>
         </ul>
     </div>

@@ -10,7 +10,6 @@ import com.microsoft.springframework.samples.dao.TodoItemRepository;
 import com.microsoft.springframework.samples.model.ProgressType;
 import com.microsoft.springframework.samples.model.Subtask;
 import com.microsoft.springframework.samples.model.TodoItem;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -19,11 +18,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
 @RestController
-public class TodoListController {
+public class TodoListController  {
 
     @Autowired
     private TodoItemRepository todoItemRepository;
@@ -41,53 +41,6 @@ public class TodoListController {
         model.put("id", UUID.randomUUID().toString());
         model.put("content", "home");
         return model;
-    }
-
-    /**
-     * HTTP GET SUBTASKS
-     */
-    @RequestMapping(value = "/api/todolist/{todolistID}/subtask/{subtaskID}",
-            method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> getSubtask(@PathVariable("todolistID") String todolistID,
-                                        @PathVariable("subtaskID") String subtaskID) {
-        System.out.println(new Date() + " GET ======= /api/todolist/{" + todolistID + "}/subtask/{" + subtaskID + "}=======");
-        try {
-            return new ResponseEntity<>(subtaskRepository.findByIdAndTodoItemID(subtaskID, todolistID), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<String>(subtaskID + " not found", HttpStatus.NOT_FOUND);
-        }
-    }
-
-    /**
-     * HTTP GET TODOITEMS
-     */
-    @RequestMapping(value = "/api/todolist/{index}",
-            method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> getTodoItem(@PathVariable("index") String todolistID) {
-        System.out.println(new Date() + " GET ======= /api/todolist/{" + todolistID
-                + "} =======");
-
-
-        try {
-            return new ResponseEntity<>(todoItemRepository.findById(todolistID), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<String>(todolistID + " not found", HttpStatus.NOT_FOUND);
-        }
-    }
-
-    /**
-     * HTTP GET ALL SUBTASKS
-     */
-    @RequestMapping(value = "/api/todolist/{todoListID}/subtask",
-            method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> getAllSubtasks(@PathVariable String todoListID) {
-        System.out.println(new Date() + " GET ======= /api/todolist =======");
-        try {
-
-            return new ResponseEntity<>(subtaskRepository.findByTodoItemID(todoListID), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Nothing found", HttpStatus.NOT_FOUND);
-        }
     }
 
     /**
@@ -124,9 +77,58 @@ public class TodoListController {
 
 
         } catch (Exception e) {
-            return new ResponseEntity<>("Nothing found", HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "TodoItems Not Found", e);
         }
     }
+
+    /**
+     * HTTP GET SUBTASKS
+     */
+    @RequestMapping(value = "/api/todolist/{todolistID}/subtask/{subtaskID}",
+            method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getSubtask(@PathVariable("todolistID") String todolistID,
+                                        @PathVariable("subtaskID") String subtaskID) {
+        System.out.println(new Date() + " GET ======= /api/todolist/{" + todolistID + "}/subtask/{" + subtaskID + "}=======");
+        try {
+            return new ResponseEntity<>(subtaskRepository.findByIdAndTodoItemID(subtaskID, todolistID), HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subtask Not Found", e);
+        }
+    }
+
+    /**
+     * HTTP GET TODOITEMS
+     */
+    @RequestMapping(value = "/api/todolist/{index}",
+            method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getTodoItem(@PathVariable("index") String todolistID) {
+        System.out.println(new Date() + " GET ======= /api/todolist/{" + todolistID
+                + "} =======");
+
+
+        try {
+            return new ResponseEntity<>(todoItemRepository.findById(todolistID), HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subtask Not Found", e);
+        }
+    }
+
+    /**
+     * HTTP GET ALL SUBTASKS
+     */
+    @RequestMapping(value = "/api/todolist/{todoListID}/subtask",
+            method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getAllSubtasks(@PathVariable String todoListID) {
+        System.out.println(new Date() + " GET ======= /api/todolist =======");
+        try {
+
+            return new ResponseEntity<>(subtaskRepository.findByTodoItemID(todoListID), HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subtask Not Found", e);
+        }
+    }
+
+
 
     /**
      * HTTP POST NEW ONE
