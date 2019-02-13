@@ -13,7 +13,7 @@ public class IntereceptorConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(restInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(restInterceptor).addPathPatterns("/api/**");
     }
 
 }

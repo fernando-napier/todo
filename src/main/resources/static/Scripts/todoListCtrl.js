@@ -19,7 +19,7 @@ angular.module('todoApp')
         $scope.newTodoDueDate = '';
         $scope.subtasks = null;
 
-        apiKey = "d425fd05da11587c0e8d7611490bfb6e";
+
 
 
         $scope.editInProgressTodo = {

@@ -47,7 +47,7 @@ public class TodoListController  {
      * HTTP GET ALL TODOLISTS
      */
     //
-    @RequestMapping(value = "/api/todolist",
+    @RequestMapping(value = "/api/todoitem",
             method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> getAllTodoItems(@RequestParam("activeFlag") String activeString) {
         System.out.println(new Date() + " GET ======= /api/todolist =======");
@@ -84,9 +84,9 @@ public class TodoListController  {
     /**
      * HTTP GET SUBTASKS
      */
-    @RequestMapping(value = "/api/todolist/{todolistID}/subtask/{subtaskID}",
+    @RequestMapping(value = "/api/todoitem/{todoItemID}/subtask/{subtaskID}",
             method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> getSubtask(@PathVariable("todolistID") String todolistID,
+    public ResponseEntity<?> getSubtask(@PathVariable("todoItemID") String todolistID,
                                         @PathVariable("subtaskID") String subtaskID) {
         System.out.println(new Date() + " GET ======= /api/todolist/{" + todolistID + "}/subtask/{" + subtaskID + "}=======");
         try {
@@ -99,7 +99,7 @@ public class TodoListController  {
     /**
      * HTTP GET TODOITEMS
      */
-    @RequestMapping(value = "/api/todolist/{index}",
+    @RequestMapping(value = "/api/todoitem/{index}",
             method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> getTodoItem(@PathVariable("index") String todolistID) {
         System.out.println(new Date() + " GET ======= /api/todolist/{" + todolistID
@@ -116,7 +116,7 @@ public class TodoListController  {
     /**
      * HTTP GET ALL SUBTASKS
      */
-    @RequestMapping(value = "/api/todolist/{todoListID}/subtask",
+    @RequestMapping(value = "/api/todoitem/{todoListID}/subtask",
             method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> getAllSubtasks(@PathVariable String todoListID) {
         System.out.println(new Date() + " GET ======= /api/todolist =======");
@@ -133,7 +133,7 @@ public class TodoListController  {
     /**
      * HTTP POST NEW ONE
      */
-    @RequestMapping(value = "/api/todolist", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/todoitem", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addNewTodoItem(@RequestBody TodoItem item) {
         System.out.println(new Date() + " POST ======= /api/todolist ======= " + item);
         try {
@@ -148,7 +148,7 @@ public class TodoListController  {
     /**
      * HTTP PUT UPDATE
      */
-    @RequestMapping(value = "/api/todolist", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/todoitem", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateTodoItem(@RequestBody TodoItem item) {
         System.out.println(new Date() + " PUT ======= /api/todolist ======= " + item);
         try {
@@ -163,7 +163,7 @@ public class TodoListController  {
     /**
      * HTTP DELETE
      */
-    @RequestMapping(value = "/api/todolist/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/api/todoitem/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteTodoItem(@PathVariable("id") String id) {
         System.out.println(new Date() + " DELETE ======= /api/todolist/{" + id
                 + "} ======= ");
@@ -181,7 +181,7 @@ public class TodoListController  {
     /**
      * HTTP POST NEW ONE
      */
-    @RequestMapping(value = "/api/todolist/{todoItemID}/subtask", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/todoitem/{todoItemID}/subtask", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addNewSubtask(@PathVariable("todoItemID") String todoItemID, @RequestBody Subtask subtask) {
         System.out.println(new Date() + " POST ======= /api/todolist ======= " + subtask);
         try {
@@ -198,7 +198,7 @@ public class TodoListController  {
     /**
      * HTTP PUT UPDATE
      */
-    @RequestMapping(value = "/api/todolist/{todoID}/subtask/", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/todoitem/{todoID}/subtask/", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateSubtask(String todoID, @RequestBody Subtask subtask) {
         System.out.println(new Date() + " PUT ======= /api/todolist ======= " + subtask);
         try {
@@ -220,7 +220,7 @@ public class TodoListController  {
     /**
      * HTTP DELETE
      */
-    @RequestMapping(value = "/api/todolist/{todolistID}/subtask/{subtaskID}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/api/todoitem/{todolistID}/subtask/{subtaskID}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteSubtask(@PathVariable("todolistID") String todolistID,
                                                 @PathVariable("subtaskID") String subtaskID) {
         System.out.println(new Date() + " DELETE ======= /api/todolist/{" + todolistID + "}/subtask/{" + subtaskID
