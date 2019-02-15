@@ -1,8 +1,13 @@
-<div ng-init="populate(true)" style="margin-bottom: 40px !important;">
+<div ng-init="populate(true, user)" style="margin-bottom: 40px !important;">
     <div style="height: 70px !important;">
         <div class="alert alert-danger" data-ng-show="error && error !== ''"><strong>Failure!</strong>&nbsp;{{error}}</div>
         <div class="alert alert-success" data-ng-show="loadingMessage && loadingMessage !== ''"><strong>Success!</strong>&nbsp;{{loadingMessage}}</div>
     </div>
+    <form>
+        User:
+        <input ng-model="user" placeholder="Search for a user" class="form-control">
+    </form>
+    <button type="button" class="btn btn-info float-right btn-sm" data-ng-click="populateNewUser(true, user)">Login?</button>
     <div class="panel">
         <p>Create a Todo Item</p>
         <div class="input-group" >
@@ -59,6 +64,7 @@
                     <div data-ng-show="item.edit" >
                         <hr>
                         <p>Update Todo Item</p>
+                        <label data-ng-model="editInProgressTodo.user"> {{ item.user }} </label>
                         <label for="editTitle"> Title</label><input id="editTitle" class="form-control" data-ng-model="editInProgressTodo.title"/>
                         <label for="editDescription">Description</label><input id="editDescription" class="form-control" data-ng-model="editInProgressTodo.description"/>
                         <label style="padding-right:10px;padding-top:10px" for="editProgress">Progress  </label>
@@ -67,7 +73,7 @@
                             <option value="NOT_STARTED">Not Started...</option>
                             <option value="IN_PROGRESS">In Progress</option>
                             <option value="ALMOST_DONE">Almost Done</option>
-                            <option value="COMPLETE">Complete!</option>
+                            <option value="COMPLETED">Complete!</option>
                         </select>
                         <label style="padding-right:10px;padding-top:10px" for="editPriority">Priority  </label>
                         <select id="editPriority" data-ng-model="editInProgressTodo.priorityType">

@@ -18,6 +18,7 @@ angular.module('todoApp')
         $scope.newTodoPriority = '';
         $scope.newTodoDueDate = '';
         $scope.subtasks = null;
+        $scope.user = null;
 
 
 
@@ -53,11 +54,16 @@ angular.module('todoApp')
         $scope.taskCompleted = function (todo) {
             todo.progressType = "COMPLETED";
 
-            todoListSvc.putItem(todo).error(function (err) {
-                todo.finished = !todo.finished;
-                $scope.error = err;
-                $scope.loadingMessage = '';
-            })
+            todoListSvc.putItem(todo).success(function (results) {
+                   $scope.populate(false, todo.owner);
+                   $scope.loadingMessage = '';
+                   $scope.error = '';
+              }).error(function (err) {
+                  todo.finished = !todo.finished;
+                  $scope.error = err;
+                   $scope.loadingMessage = '';
+              })
+
         };
 
         $scope.editSwitch = function (todo) {
@@ -85,7 +91,7 @@ angular.module('todoApp')
 
          $scope.finishCreateSubtask = function (todoItemID) {
                      function getUser() {
-                         var user = localStorage.getItem('user') || 'unknown';
+                         var user = $scope.user || 'unknown';
                          localStorage.setItem('user', user);
                          return user;
                      }
@@ -123,14 +129,39 @@ angular.module('todoApp')
             }
         };
 
-        $scope.populate = function (activeFlag) {
-            todoListSvc.getItems(activeFlag).success(function (results) {
+        $scope.populate = function (activeFlag, user) {
+
+            if (user == null) {
+                 var user = localStorage.getItem('user') || 'unknown';
+            }
+
+            todoListSvc.getItems(activeFlag, user).success(function (results) {
                 $scope.todoList = results;
-            }).error(function (err) {
+                    $scope.loadingMessage = ''
+                    $scope.error = '';
+                }).error(function (err) {
                 $scope.error = err;
                 $scope.loadingMessage = '';
             })
         };
+
+        $scope.populateNewUser = function (activeFlag, user) {
+            function getUser() {
+                 var user = $scope.user || 'unknown';
+                 localStorage.setItem('user', user);
+                 return user;
+            }
+
+            todoListSvc.getItems(activeFlag, getUser()).success(function (results) {
+                $scope.todoList = results;
+                    $scope.loadingMessage = "Logged in! Create some todos!"
+                    $scope.error = '';
+                }).error(function (err) {
+                $scope.error = err;
+                $scope.loadingMessage = '';
+            })
+        };
+
 
         $scope.populateSubtasks = function (id) {
             todoListSvc.getSubtasks(id).success(function (results) {
@@ -143,7 +174,7 @@ angular.module('todoApp')
 
         $scope.delete = function (id) {
             todoListSvc.deleteItem(id).success(function (results) {
-                $scope.populate();
+                $scope.populate(true, $scope.user);
                 $scope.loadingMessage = results;
                 $scope.error = '';
             }).error(function (err) {
@@ -153,8 +184,9 @@ angular.module('todoApp')
         };
 
         $scope.update = function (todo) {
+            $scope.editInProgressTodo.owner = todo.owner;
             todoListSvc.putItem($scope.editInProgressTodo).success(function (results) {
-                $scope.populate();
+                $scope.populate(true, $scope.user);
                 $scope.editSwitch(todo);
                 $scope.loadingMessage = results;
                 $scope.error = '';
@@ -166,11 +198,10 @@ angular.module('todoApp')
         
         $scope.add = function () {
             function getUser() {
-                var user = localStorage.getItem('user') || 'unknown';
-                localStorage.setItem('user', user);
-                return user;
-            }
-
+               var user = $scope.user || 'unknown';
+               localStorage.setItem('user', user);
+               return user;
+           }
             todoListSvc.postItem({
                 'title': $scope.newTodoTitle,
                 'description': $scope.newTodoDescription,

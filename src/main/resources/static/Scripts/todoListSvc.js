@@ -12,8 +12,8 @@ angular.module('todoApp')
         return {
 
 
-            getItems: function (activeFlag) {
-                return $http.get('api/todoitem' + apiToken + '&activeFlag=' + activeFlag);
+            getItems: function (activeFlag, user) {
+                return $http.get('api/todoitem' + apiToken + '&activeFlag=' + activeFlag + '&user=' + user);
             },
             getItem: function (id) {
                 return $http.get('api/todoitem/' + id + apiToken);

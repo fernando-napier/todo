@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.websocket.server.PathParam;
 import java.util.*;
 
 @RestController
@@ -44,12 +45,13 @@ public class TodoListController  {
     }
 
     /**
-     * HTTP GET ALL TODOLISTS
+     * HTTP GET ALL TODO Items
      */
     //
     @RequestMapping(value = "/api/todoitem",
             method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> getAllTodoItems(@RequestParam("activeFlag") String activeString) {
+    public ResponseEntity<?> getAllTodoItems(@RequestParam("activeFlag") String activeString,
+                                             @RequestParam("user") String user) {
         System.out.println(new Date() + " GET ======= /api/todolist =======");
 
         Boolean activeFlag = null;
@@ -58,9 +60,13 @@ public class TodoListController  {
             activeFlag = Boolean.valueOf(activeString);
         }
 
+        if (StringUtils.isBlank(user)) {
+            user = "";
+        }
+
         try {
             if (activeFlag == null) {
-                return new ResponseEntity<>(todoItemRepository.findAll(new Sort(Sort.Direction.DESC, "priorityType")), HttpStatus.OK);
+                return new ResponseEntity<>(todoItemRepository.findByOwnerOrderByPriorityType(user, new Sort(Sort.Direction.DESC, "priorityType")), HttpStatus.OK);
             } else if (activeFlag == true) {
                 List<String> list = new ArrayList<String>() {{
                     add(ProgressType.NOT_STARTED.toString());
@@ -68,11 +74,11 @@ public class TodoListController  {
                     add(ProgressType.ALMOST_DONE.toString());
                 }};
 
-                return new ResponseEntity<>(todoItemRepository.findByProgressTypeIn(list, new Sort(Sort.Direction.DESC, "priorityType")), HttpStatus.OK);
+                return new ResponseEntity<>(todoItemRepository.findByOwnerAndProgressTypeIn(user, list, new Sort(Sort.Direction.DESC, "priorityType")), HttpStatus.OK);
             } else if (activeFlag == false) {
-                return new ResponseEntity<>(todoItemRepository.findByProgressType(ProgressType.COMPLETED, new Sort(Sort.Direction.ASC, "dueDate")), HttpStatus.OK);
+                return new ResponseEntity<>(todoItemRepository.findByOwnerAndProgressType(user, ProgressType.COMPLETED, new Sort(Sort.Direction.ASC, "dueDate")), HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(todoItemRepository.findAll(new Sort(Sort.Direction.DESC, "priorityType")), HttpStatus.OK);
+                return new ResponseEntity<>(todoItemRepository.findByOwnerOrderByPriorityType(user, new Sort(Sort.Direction.DESC, "priorityType")), HttpStatus.OK);
             }
 
 
@@ -196,10 +202,10 @@ public class TodoListController  {
 
 
     /**
-     * HTTP PUT UPDATE
+     * HTTP PUT for a subtask within a todoitem
      */
     @RequestMapping(value = "/api/todoitem/{todoID}/subtask/", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> updateSubtask(String todoID, @RequestBody Subtask subtask) {
+    public ResponseEntity<String> updateSubtask(@PathVariable("todoID") String todoID, @RequestBody Subtask subtask) {
         System.out.println(new Date() + " PUT ======= /api/todolist ======= " + subtask);
         try {
             TodoItem todoItem = todoItemRepository.findById(todoID).get();

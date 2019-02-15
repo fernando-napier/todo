@@ -21,6 +21,8 @@ package com.microsoft.springframework.samples.dao;
 @Repository
 public interface TodoItemRepository extends DocumentDbRepository<TodoItem, String> {
 
-        List<TodoItem> findByProgressTypeIn(List<String> progressType, Sort sort);
-        List<TodoItem> findByProgressType(ProgressType progressType, Sort sort);
+
+        List<TodoItem> findByOwnerAndProgressTypeIn(String owner, List<String> progressType, Sort sort);
+        List<TodoItem> findByOwnerAndProgressType(String ownner, ProgressType progressType, Sort sort);
+        List<TodoItem> findByOwnerOrderByPriorityType(String owner, Sort priorityType);
  }
