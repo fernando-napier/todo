@@ -13,4 +13,4 @@ Cosmos DB](https://docs.microsoft.com/en-us/java/azure/spring-framework/configur
 
 To run the application, either clone this repo and run the spring boot app via an IDE like intellij, or visit https://maven-web-app-190215041432649.azurewebsites.net/
 
-I might add a tutorial video to explain how the app is supposed to work. 
+I might add a tutorial video to explain how the app is supposed to work.
