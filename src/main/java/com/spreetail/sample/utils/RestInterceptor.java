@@ -1,17 +1,14 @@
-package com.microsoft.springframework.samples.utils;
+package com.spreetail.sample.utils;
 
-import com.microsoft.springframework.samples.dao.ServiceConfigRepository;
-import com.microsoft.springframework.samples.model.ServiceConfig;
+import com.spreetail.sample.dao.ServiceConfigRepository;
+import com.spreetail.sample.model.ServiceConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

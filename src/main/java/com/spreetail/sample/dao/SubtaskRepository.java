@@ -1,7 +1,7 @@
-package com.microsoft.springframework.samples.dao;
+package com.spreetail.sample.dao;
 
 import com.microsoft.azure.spring.data.cosmosdb.repository.DocumentDbRepository;
-import com.microsoft.springframework.samples.model.Subtask;
+import com.spreetail.sample.model.Subtask;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

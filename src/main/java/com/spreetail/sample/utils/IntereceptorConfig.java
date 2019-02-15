@@ -1,4 +1,4 @@
-package com.microsoft.springframework.samples.utils;
+package com.spreetail.sample.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

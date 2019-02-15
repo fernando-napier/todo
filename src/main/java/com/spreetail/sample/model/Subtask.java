@@ -1,8 +1,7 @@
-package com.microsoft.springframework.samples.model;
+package com.spreetail.sample.model;
 
 import com.microsoft.azure.spring.data.cosmosdb.core.mapping.Document;
 
-import java.util.List;
 import java.util.Objects;
 
 @Document
