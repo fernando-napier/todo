@@ -13,4 +13,50 @@ Cosmos DB](https://docs.microsoft.com/en-us/java/azure/spring-framework/configur
 
 To run the application, either clone this repo and run the spring boot app via an IDE like intellij, or visit https://maven-web-app-190215041432649.azurewebsites.net/
 
-I might add a tutorial video to explain how the app is supposed to work.
+Fun Facts:
+  * You cannot create subtasks via the front end, but the API does fully support it
+  * The feature I added to this that I figured would be useful is an Archive page that shows a user the todos they've completed and when they were completed, also allows for users to re-open tasks if necessary 
+  * The api is located at {{url}}/api/, here's the structure:
+    * /api/todoitem?
+    * /api/todoitem/{todoID}?
+    * /api/todoitem/{todoID}/subtask?
+    * /api/todoitem/{todoID}/subtask/{subtaskID}?
+  * The api does have a key, if you don't supply the key you will be returned a 403 Access Forbidden response
+    * the key is d425fd05da11587c0e8d7611490bfb6e
+    
+
+Tutorial Time
+
+1) Either publish the local version or go to the Azure site, the following landing page will appear:
+
+![landing](https://github.com/fernando-napier/todo/blob/master/How%20to%20use%20the%20site/landing%20page.PNG)
+
+2) Now click on 'TodoList' on the nav bar, it'll take you to a sample todo list 
+
+![sample](https://github.com/fernando-napier/todo/blob/master/How%20to%20use%20the%20site/todo%20list.PNG)
+
+
+3) We will now 'login', where we pick up all the todos for a specific user (users not in the system will return no todos)
+
+![login](https://github.com/fernando-napier/todo/blob/master/How%20to%20use%20the%20site/login%20session.PNG)
+
+
+4) To create a new todo, simply add some info about the todo and click the 'add' button
+
+![create](https://github.com/fernando-napier/todo/blob/master/How%20to%20use%20the%20site/create%20todo.PNG)
+
+
+5) For existing todos, you can edit, delete, and 'complete' them
+
+![edit](https://github.com/fernando-napier/todo/blob/master/How%20to%20use%20the%20site/update%20todo.PNG)
+deleted items are purged from the repo of todoitems
+![delete](https://github.com/fernando-napier/todo/blob/master/How%20to%20use%20the%20site/delete%20todo.PNG)
+completed items are purged only from the active view, as now they have a status of COMPLETED
+![complete](https://github.com/fernando-napier/todo/blob/master/How%20to%20use%20the%20site/complete%20todo.PNG)
+
+
+6) We can check the archive to see what has been completed for a user, and re-open todos if necessary
+
+
+![completed](https://github.com/fernando-napier/todo/blob/master/How%20to%20use%20the%20site/complete%20todo%20undo.PNG)
+
