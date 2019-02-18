@@ -34,13 +34,13 @@ public class TodoListController  {
     public TodoListController() {
     }
 
-    @RequestMapping("/home")
-    public Map<String, Object> home() {
-        System.out.println(new Date() + " ======= /home =======");
-        final Map<String, Object> model = new HashMap<String, Object>();
-        model.put("id", UUID.randomUUID().toString());
-        model.put("content", "home");
-        return model;
+
+    private List<String> generateActiveProgressTypesList() {
+        return new ArrayList<String>() {{
+            add(ProgressType.NOT_STARTED.toString());
+            add(ProgressType.IN_PROGRESS.toString());
+            add(ProgressType.ALMOST_DONE.toString());
+        }};
     }
 
     /**
@@ -67,11 +67,7 @@ public class TodoListController  {
             if (activeFlag == null) {
                 return new ResponseEntity<>(todoItemRepository.findByOwnerOrderByPriorityType(user, new Sort(Sort.Direction.DESC, "priorityType")), HttpStatus.OK);
             } else if (activeFlag == true) {
-                List<String> list = new ArrayList<String>() {{
-                    add(ProgressType.NOT_STARTED.toString());
-                    add(ProgressType.IN_PROGRESS.toString());
-                    add(ProgressType.ALMOST_DONE.toString());
-                }};
+                List<String> list = this.generateActiveProgressTypesList();
 
                 return new ResponseEntity<>(todoItemRepository.findByOwnerAndProgressTypeIn(user, list, new Sort(Sort.Direction.DESC, "priorityType")), HttpStatus.OK);
             } else if (activeFlag == false) {
@@ -139,10 +135,19 @@ public class TodoListController  {
      * HTTP POST NEW ONE
      */
     @RequestMapping(value = "/api/todoitem", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> addNewTodoItem(@RequestBody TodoItem item) {
+    public ResponseEntity<?> addNewTodoItem(@RequestBody TodoItem item) {
         System.out.println(new Date() + " POST ======= /api/todolist ======= " + item);
         try {
             item.setID(UUID.randomUUID().toString());
+
+            // check for active duplicate todos
+            // typically would do this at the db level but cosmosdb doesn't allow for uniqueness
+            List<TodoItem> items = todoItemRepository.findByOwnerAndTitleAndProgressTypeIn(
+                    item.getOwner(), item.getTitle(), this.generateActiveProgressTypesList());
+
+            if (!CollectionUtils.isEmpty(items)) {
+                return new ResponseEntity<>("Duplicate entity found", HttpStatus.CONFLICT);
+            }
             todoItemRepository.save(item);
             return new ResponseEntity<String>("Entity created", HttpStatus.CREATED);
         } catch (Exception e) {
@@ -157,6 +162,20 @@ public class TodoListController  {
     public ResponseEntity<String> updateTodoItem(@RequestBody TodoItem item) {
         System.out.println(new Date() + " PUT ======= /api/todolist ======= " + item);
         try {
+
+            // check for active duplicate todos
+            // in case there is an active todoitem with the same owner and title
+            List<TodoItem> items = todoItemRepository.findByOwnerAndTitleAndProgressTypeIn(
+                    item.getOwner(), item.getTitle(), this.generateActiveProgressTypesList());
+
+            if (!CollectionUtils.isEmpty(items)) {
+                if (items.size() > 1) {
+                    return new ResponseEntity<>("Duplicate entity found", HttpStatus.CONFLICT);
+                } else if (!items.get(0).getID().equalsIgnoreCase(item.getID())){
+                    return new ResponseEntity<>("Duplicate entity found", HttpStatus.CONFLICT);
+                }
+            }
+
             todoItemRepository.deleteById(item.getID());
             todoItemRepository.save(item);
             return new ResponseEntity<String>("Entity updated", HttpStatus.OK);
@@ -192,6 +211,14 @@ public class TodoListController  {
         try {
             subtask.setID(UUID.randomUUID().toString());
             subtask.setTodoItemID(todoItemID);
+
+            List<Subtask> subtasks = subtaskRepository.findByTodoItemIDAndDescriptionAndProgressTypeIn(
+              subtask.getTodoItemID(), subtask.getDescription(), this.generateActiveProgressTypesList());
+
+            if (!CollectionUtils.isEmpty(subtasks)) {
+                return new ResponseEntity<>("Duplicate entity found", HttpStatus.CONFLICT);
+            }
+
             subtaskRepository.save(subtask);
             return new ResponseEntity<String>("Entity created", HttpStatus.CREATED);
         } catch (Exception e) {
@@ -210,6 +237,18 @@ public class TodoListController  {
             TodoItem todoItem = todoItemRepository.findById(todoID).get();
 
             if (todoItem.getID().equalsIgnoreCase(subtask.getTodoItemID())) {
+                List<Subtask> subtasks = subtaskRepository.findByTodoItemIDAndDescriptionAndProgressTypeIn(
+                        subtask.getTodoItemID(), subtask.getDescription(), this.generateActiveProgressTypesList());
+
+
+                if (!CollectionUtils.isEmpty(subtasks)) {
+                    if (subtasks.size() > 1) {
+                        return new ResponseEntity<>("Duplicate entity found", HttpStatus.CONFLICT);
+                    } else if (!subtasks.get(0).getID().equalsIgnoreCase(subtask.getID())){
+                        return new ResponseEntity<>("Duplicate entity found", HttpStatus.CONFLICT);
+                    }
+                }
+
                 subtaskRepository.deleteById(subtask.getID());
                 subtaskRepository.save(subtask);
                 return new ResponseEntity<String>("Entity updated", HttpStatus.OK);

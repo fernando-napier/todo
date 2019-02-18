@@ -22,4 +22,5 @@ public interface TodoItemRepository extends DocumentDbRepository<TodoItem, Strin
         List<TodoItem> findByOwnerAndProgressTypeIn(String owner, List<String> progressType, Sort sort);
         List<TodoItem> findByOwnerAndProgressType(String ownner, ProgressType progressType, Sort sort);
         List<TodoItem> findByOwnerOrderByPriorityType(String owner, Sort priorityType);
+        List<TodoItem> findByOwnerAndTitleAndProgressTypeIn(String owner, String title, List<String> progressType);
  }
